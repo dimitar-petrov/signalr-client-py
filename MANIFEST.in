@@ -1,0 +1,2 @@
+include AUTHORS DESCRIPTION.rst LICENSE.md requirements
+prune *.pyc
