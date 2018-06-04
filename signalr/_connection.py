@@ -1,5 +1,11 @@
-import json
-import gevent
+# import gevent
+import asyncio
+
+try:
+    import ujson as json
+except ImportError:
+    import json
+
 from signalr.events import EventHook
 from signalr.hubs import Hub
 from signalr.transports import AutoTransport
@@ -20,10 +26,9 @@ class Connection:
         self.starting = EventHook()
         self.stopping = EventHook()
         self.__transport = AutoTransport(session, self)
-        self.__greenlet = None
         self.started = False
 
-        def handle_error(**kwargs):
+        async def handle_error(**kwargs):
             error = kwargs["E"] if "E" in kwargs else None
             if error is None:
                 return
@@ -34,36 +39,32 @@ class Connection:
 
         self.starting += self.__set_data
 
-    def __set_data(self):
+    async def __set_data(self):
         self.data = json.dumps([{'name': hub_name} for hub_name in self.__hubs])
 
     def increment_send_counter(self):
         self.__send_counter += 1
         return self.__send_counter
 
-    def start(self):
-        self.starting.fire()
+    async def start(self):
+        await self.starting.fire()
 
-        negotiate_data = self.__transport.negotiate()
+        negotiate_data = await self.__transport.negotiate()
         self.token = negotiate_data['ConnectionToken']
 
-        listener = self.__transport.start()
+        await self.__transport.start()
 
-        def wrapped_listener():
-            listener()
-            gevent.sleep()
-
-        self.__greenlet = gevent.spawn(wrapped_listener)
         self.started = True
 
     def wait(self, timeout=30):
-        gevent.joinall([self.__greenlet], timeout)
+        pass
+        # gevent.joinall([self.__greenlet], timeout)
 
-    def send(self, data):
-        self.__transport.send(data)
+    async def send(self, data):
+        await self.__transport.send(data)
 
     def close(self):
-        gevent.kill(self.__greenlet)
+        # gevent.kill(self.__greenlet)
         self.__transport.close()
 
     def register_hub(self, name):
@@ -77,6 +78,9 @@ class Connection:
 
     def hub(self, name):
         return self.__hubs[name]
+
+    def __aenter__(self):
+        pass
 
     def __enter__(self):
         self.start()

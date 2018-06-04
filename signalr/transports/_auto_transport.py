@@ -12,8 +12,8 @@ class AutoTransport(Transport):
         ]
         self.__transport = None
 
-    def negotiate(self):
-        negotiate_data = Transport.negotiate(self)
+    async def negotiate(self):
+        negotiate_data = await Transport.negotiate(self)
         self.__transport = self.__get_transport(negotiate_data)
 
         return negotiate_data
@@ -24,11 +24,11 @@ class AutoTransport(Transport):
                 return transport
         raise Exception('Cannot find suitable transport')
 
-    def start(self):
-        return self.__transport.start()
+    async def start(self):
+        return await self.__transport.start()
 
-    def send(self, data):
-        self.__transport.send(data)
+    async def send(self, data):
+        await self.__transport.send(data)
 
     def close(self):
         self.__transport.close()

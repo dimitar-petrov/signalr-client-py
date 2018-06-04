@@ -3,6 +3,9 @@ import sseclient
 from ._transport import Transport
 
 
+# TODO: This class is not converted to asyncio,
+# just added async methods, not to break the
+# Transport sublcass
 class ServerSentEventsTransport(Transport):
     def __init__(self, session, connection):
         Transport.__init__(self, session, connection)
@@ -11,7 +14,7 @@ class ServerSentEventsTransport(Transport):
     def _get_name(self):
         return 'serverSentEvents'
 
-    def start(self):
+    async def start(self):
         self.__response = sseclient.SSEClient(self._get_url('connect'), session=self._session)
         self._session.get(self._get_url('start'))
 
@@ -22,7 +25,7 @@ class ServerSentEventsTransport(Transport):
 
         return _receive
 
-    def send(self, data):
+    async def send(self, data):
         response = self._session.post(self._get_url('send'), data={'data': json.dumps(data)})
         parsed = json.loads(response.content)
         self._connection.received.fire(**parsed)

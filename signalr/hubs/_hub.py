@@ -15,8 +15,8 @@ class HubServer:
         self.__connection = connection
         self.__hub = hub
 
-    def invoke(self, method, *data):
-        self.__connection.send({
+    async def invoke(self, method, *data):
+        await self.__connection.send({
             'H': self.name,
             'M': method,
             'A': data,
@@ -29,7 +29,7 @@ class HubClient(object):
         self.name = name
         self.__handlers = {}
 
-        def handle(**kwargs):
+        async def handle(**kwargs):
             messages = kwargs['M'] if 'M' in kwargs and len(kwargs['M']) > 0 else {}
             for inner_data in messages:
                 hub = inner_data['H'] if 'H' in inner_data else ''
@@ -37,7 +37,7 @@ class HubClient(object):
                     method = inner_data['M']
                     if method in self.__handlers:
                         arguments = inner_data['A']
-                        self.__handlers[method].fire(*arguments)
+                        await self.__handlers[method].fire(*arguments)
 
         connection.received += handle
 
