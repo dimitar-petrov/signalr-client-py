@@ -15,7 +15,8 @@ class ServerSentEventsTransport(Transport):
         return 'serverSentEvents'
 
     async def start(self):
-        self.__response = sseclient.SSEClient(self._get_url('connect'), session=self._session)
+        self.__response = sseclient.SSEClient(
+            self._get_url('connect'), session=self._session)
         self._session.get(self._get_url('start'))
 
         def _receive():
@@ -26,7 +27,8 @@ class ServerSentEventsTransport(Transport):
         return _receive
 
     async def send(self, data):
-        response = self._session.post(self._get_url('send'), data={'data': json.dumps(data)})
+        response = self._session.post(
+            self._get_url('send'), data={'data': json.dumps(data)})
         parsed = json.loads(response.content)
         self._connection.received.fire(**parsed)
 

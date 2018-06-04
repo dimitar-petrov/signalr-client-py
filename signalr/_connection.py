@@ -1,6 +1,3 @@
-# import gevent
-import asyncio
-
 try:
     import ujson as json
 except ImportError:
@@ -40,7 +37,9 @@ class Connection:
         self.starting += self.__set_data
 
     async def __set_data(self):
-        self.data = json.dumps([{'name': hub_name} for hub_name in self.__hubs])
+        self.data = json.dumps([{
+            'name': hub_name
+        } for hub_name in self.__hubs])
 
     def increment_send_counter(self):
         self.__send_counter += 1
@@ -71,7 +70,8 @@ class Connection:
         if name not in self.__hubs:
             if self.started:
                 raise RuntimeError(
-                    'Cannot create new hub because connection is already started.')
+                    'Cannot create new hub because connection is already started.'
+                )
 
             self.__hubs[name] = Hub(name, self)
         return self.__hubs[name]

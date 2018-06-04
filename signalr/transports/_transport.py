@@ -1,5 +1,4 @@
 from abc import abstractmethod
-import asyncio
 from urllib.parse import quote_plus
 
 try:
@@ -18,9 +17,10 @@ class Transport:
         pass
 
     async def negotiate(self):
-        url = self.__get_base_url(self._connection,
-                                  'negotiate',
-                                  connectionData=self._connection.data)
+        url = self.__get_base_url(
+            self._connection,
+            'negotiate',
+            connectionData=self._connection.data)
         negotiate = await self._session.get(url)
 
         negotiate.raise_for_status()
@@ -60,8 +60,10 @@ class Transport:
         args = kwargs.copy()
         args.update(connection.qs)
         args['clientProtocol'] = connection.protocol_version
-        query = '&'.join(['{key}={value}'.format(key=key, value=quote_plus(args[key])) for key in args])
+        query = '&'.join([
+            '{key}={value}'.format(key=key, value=quote_plus(args[key]))
+            for key in args
+        ])
 
-        return '{url}/{action}?{query}'.format(url=connection.url,
-                                               action=action,
-                                               query=query)
+        return '{url}/{action}?{query}'.format(
+            url=connection.url, action=action, query=query)

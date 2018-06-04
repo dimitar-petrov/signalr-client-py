@@ -20,7 +20,8 @@ class WebSocketsTransport(Transport):
     def __get_ws_url_from(url):
         parsed = urlparse(url)
         scheme = 'wss' if parsed.scheme == 'https' else 'ws'
-        url_data = (scheme, parsed.netloc, parsed.path, parsed.params, parsed.query, parsed.fragment)
+        url_data = (scheme, parsed.netloc, parsed.path, parsed.params,
+                    parsed.query, parsed.fragment)
 
         return urlunparse(url_data)
 

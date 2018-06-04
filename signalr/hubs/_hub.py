@@ -30,7 +30,8 @@ class HubClient(object):
         self.__handlers = {}
 
         async def handle(**kwargs):
-            messages = kwargs['M'] if 'M' in kwargs and len(kwargs['M']) > 0 else {}
+            messages = kwargs['M'] if 'M' in kwargs and len(
+                kwargs['M']) > 0 else {}
             for inner_data in messages:
                 hub = inner_data['H'] if 'H' in inner_data else ''
                 if hub.lower() == self.name.lower():
