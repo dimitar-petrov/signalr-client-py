@@ -36,7 +36,7 @@ class Transport:
         pass
 
     @abstractmethod
-    def close(self):
+    async def close(self):
         pass
 
     def accept(self, negotiate_data):

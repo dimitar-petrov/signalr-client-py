@@ -30,8 +30,8 @@ class AutoTransport(Transport):
     async def send(self, data):
         await self.__transport.send(data)
 
-    def close(self):
-        self.__transport.close()
+    async def close(self):
+        await self.__transport.close()
 
     def _get_name(self):
         return 'auto'

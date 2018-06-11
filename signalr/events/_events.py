@@ -13,3 +13,6 @@ class EventHook(object):
     async def fire(self, *args, **kwargs):
         for handler in self._handlers:
             await handler(*args, **kwargs)
+
+    async def __call__(self, *args, **kwargs):
+        await self.fire(*args, **kwargs)

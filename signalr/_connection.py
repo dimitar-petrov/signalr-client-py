@@ -30,7 +30,7 @@ class Connection:
             if error is None:
                 return
 
-            self.error.fire(error)
+            await self.error.fire(error)
 
         self.received += handle_error
 
@@ -53,18 +53,16 @@ class Connection:
 
         await self.__transport.start()
 
-        self.started = True
-
-    def wait(self, timeout=30):
-        pass
-        # gevent.joinall([self.__greenlet], timeout)
+    # def wait(self, timeout=30):
+    #     pass
+    #     # gevent.joinall([self.__greenlet], timeout)
 
     async def send(self, data):
         await self.__transport.send(data)
 
-    def close(self):
+    async def close(self):
         # gevent.kill(self.__greenlet)
-        self.__transport.close()
+        await self.__transport.close()
 
     def register_hub(self, name):
         if name not in self.__hubs:
